@@ -25,7 +25,7 @@ if password == "-":
 else:
     client.start(phone=phone_number, password=password)
 
-print(f'Начал парсить все каналы где будет попадаться фраза {phrase}\n'
+print(f'Начал парсить все каналы где будет попадаться фраза - "{phrase}"\n'
       f'Вся информация будет в файле parcing.txt')
 
 
@@ -35,15 +35,15 @@ async def channel_parcer(event):
         if isinstance(event.peer_id, types.PeerChannel):
             if phrase.upper() in str(event.message.message).upper():
                 if event.message.message == dialog.message.message:
-                    entity = await client.get_input_entity(dialog)
-                    if dialog.entity.username is None:
-                        link_to_message = f'https://t.me/c/{dialog.message.peer_id.channel_id}/{dialog.message.id}'
-                    else:
-                        link_to_message = f'https://t.me/{dialog.entity.username}/{dialog.message.id}'
-                    def_phrace = f'{dialog.name};{dialog.message.date};' \
-                                 f'{link_to_message};{dialog.message.message}'
-                    print(dialog.name, entity)
-                    write_in_file(def_phrace)
+                    if dialog.entity.broadcast:
+                        if dialog.entity.username is None:
+                            link_to_message = f'https://t.me/c/{dialog.message.peer_id.channel_id}/{dialog.message.id}'
+                        else:
+                            link_to_message = f'https://t.me/{dialog.entity.username}/{dialog.message.id}'
+                        def_phrace = f'{dialog.name};{dialog.message.date};' \
+                                     f'{link_to_message};{dialog.message.message}'
+                        print(def_phrace)
+                        write_in_file(def_phrace)
 
 
 client.run_until_disconnected()
